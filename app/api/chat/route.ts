@@ -545,7 +545,7 @@ export async function POST(req: NextRequest) {
   ].join("\n");
 
   const first = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4.1-nano",
     temperature: 0,
     tools: [tool],
     tool_choice: { type: "function", function: { name: "gsc_query" } },
@@ -591,7 +591,7 @@ export async function POST(req: NextRequest) {
   const toolJson = truncateJsonForModel(JSON.stringify(toolResult), 50_000);
 
   const second = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4.1-nano",
     temperature: 0,
     messages: [
       { role: "system", content: system },
