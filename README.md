@@ -33,6 +33,50 @@ npm run dev
 5) Open:
 - `http://localhost:3000`
 
+## Paywall + Stripe (Local + Vercel)
+
+### 1) Run DB migration (Neon / Postgres)
+
+Run this SQL against your database:
+- `migrations/001_paywall.sql`
+
+Example with `psql`:
+```bash
+psql "$POSTGRES_URL" -f migrations/001_paywall.sql
+```
+
+### 2) Environment variables
+
+Add these to `.env.local` (and Vercel project env vars):
+- `POSTGRES_URL` (your Neon/Postgres connection string)
+- `APP_URL` (e.g. `http://localhost:3000` locally; your Vercel URL in prod)
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICE_ID` (the $9/mo recurring price id)
+
+### 3) Stripe webhook forwarding (Stripe CLI)
+
+Install and login:
+```bash
+stripe login
+```
+
+Forward webhooks to your local dev server:
+```bash
+stripe listen --forward-to http://localhost:3000/api/stripe/webhook
+```
+
+Copy the printed signing secret into `STRIPE_WEBHOOK_SECRET`.
+
+### 4) End-to-end test flow
+
+1. `npm run dev`
+2. Open `http://localhost:3000`
+3. Click “Continue with Google” to log in (Google OAuth)
+4. Ask up to 3 questions for free at `http://localhost:3000/app`
+5. On question #4 you should see a paywall; click “Upgrade ($9/mo)” to open Stripe Checkout
+6. After successful payment you’ll be redirected back to `/app?checkout=success...` and the saved question will auto-run.
+
 ## Getting Started
 
 First, run the development server:

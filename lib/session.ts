@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 export type SessionData = {
   userId?: string;
+  oauthState?: string;
 };
 
 export function requireEnv(name: string): string {
@@ -13,6 +14,8 @@ export function requireEnv(name: string): string {
   return value;
 }
 
+export const SESSION_COOKIE_NAME = "gsc-chat";
+
 function getSessionOptions(): SessionOptions {
   const password = requireEnv("SESSION_PASSWORD");
   if (password.length < 32) {
@@ -20,7 +23,7 @@ function getSessionOptions(): SessionOptions {
   }
 
   return {
-    cookieName: "gsc-chat",
+    cookieName: SESSION_COOKIE_NAME,
     password,
     cookieOptions: {
       secure: process.env.NODE_ENV === "production",
